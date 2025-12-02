@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Card Game - Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body class="bg-gradient-to-br from-green-900 via-green-800 to-green-900 min-h-screen">
+    <!-- Header -->
+    <header class="bg-green-950 shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-white">Golf Card Game</h1>
+            <div class="flex items-center gap-4">
+                <span class="text-green-200">Welcome, <span id="username"
+                        class="font-semibold text-white"></span>!</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- the round Complete Banner -->
+            <div class="bg-white rounded-lg shadow-xl p-8 mb-6 text-center">
+                <h2 class="text-4xl font-bold text-gray-800 mb-2">🎉 Round Complete!</h2>
+                <p id="gameName" class="text-xl text-gray-600"></p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!--  Results -->
+                <div class="bg-white rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Round <span id="roundNumber"></span> Results</h3>
+
+                    <div id="roundScores" class="space-y-4">
+                        <!-- Round scores dynamically here -->
+                    </div>
+                </div>
+
+                <!-- Overall Leaderboard -->
+                <div class="bg-white rounded-lg shadow-xl p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Overall Leaderboard</h3>
+
+                    <div id="overallScores" class="space-y-4">
+                        <!-- Overall scores dynamically here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- player cards snapshot of the end of the round will be shown here -->
+            <div class="bg-white rounded-lg shadow-xl p-6 mt-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">Final Cards</h3>
+
+                <div id="playerCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- dynamically shown here -->
+                </div>
+            </div>
+
+            <!-- Next Round -  Options -->
+            <div class="bg-white rounded-lg shadow-xl p-8 mt-6">
+                <div class="text-center">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">What's Next?</h3>
+
+                    <div id="countdownSection" class="mb-6 hidden">
+                        <p class="text-gray-600 mb-2">Next round starting in:</p>
+                        <p id="countdown" class="text-5xl font-bold text-green-600">15</p>
+                        <p class="text-sm text-gray-500 mt-2">Click "Play Another Round" to continue</p>
+                    </div>
+
+                    <div class="flex gap-4 justify-center">
+                        <button id="playAgainBtn"
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg transition text-lg">
+                            🎮 Play Another Round
+                        </button>
+
+                        <!-- host can begin -->
+                        <button id="beginBtn"
+                            class="hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg transition text-lg disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            disabled>
+                            Begin
+                        </button>
+
+                        <!-- The backToLobbyBtn is to be "back to lobby" if spectating, "leave game" if playing -->
+                        <button id="backToLobbyBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-8 rounded-lg transition text-lg">
+                            Back to Lobby
+                        </button>
+                    </div>
+
+                    <div id="playersReady" class="mt-6 hidden">
+                        <p class="text-gray-600 mb-2">
+                            Players ready: <span id="readyCount" class="font-bold">0</span>
+                        </p>
+                        <div id="readyList" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/cards.js"></script>
+    <script src="/js/results.js"></script>
+
+</body>
+
+</html>

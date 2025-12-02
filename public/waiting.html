@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Card Game - Waiting Room</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body class="bg-gradient-to-br from-green-900 via-green-800 to-green-900 min-h-screen">
+    <!-- Header -->
+    <header class="bg-green-950 shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-white">Golf Card Game</h1>
+            <div class="flex items-center gap-4">
+                <span class="text-green-200">Welcome, <span id="username" class="font-semibold text-white"></span>!</span>
+                <button id="backToLobbyBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition">
+                    ← Back to Lobby
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Game Info Card -->
+            <div class="bg-white rounded-lg shadow-xl p-8 mb-6">
+                <div class="text-center mb-8">
+                    <h2 id="gameName" class="text-3xl font-bold text-gray-800 mb-2"></h2>
+                    <p class="text-gray-600">Waiting for players to join...</p>
+                </div>
+
+                <!-- Editing the Game Name (by the Host Only) -->
+                <div id="editNameSection" class="hidden mb-6">
+                    <div class="flex gap-2">
+                        <input 
+                            type="text" 
+                            id="newGameName" 
+                            placeholder="Enter new game name"
+                            maxlength="100"
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                        >
+                        <button 
+                            id="updateNameBtn"
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition"
+                        >
+                            Update
+                        </button>
+                        <button 
+                            id="cancelEditBtn"
+                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-6 py-2 rounded-lg font-semibold transition"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!--  List Players -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center justify-between">
+                        <span>Players (<span id="playerCount">0</span>)</span>
+                        <button id="editNameToggleBtn" class="hidden text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded-lg transition">
+                            ✏️ Edit Name
+                        </button>
+                    </h3>
+                    <div id="playersList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Players will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Game Rules -->
+                <div class="bg-green-50 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">📋 Game Rules</h3>
+                    <ul class="space-y-2 text-gray-700 text-sm">
+                        <li>• Each player gets 6 cards in a 2x3 grid</li>
+                        <li>• The Goal: Get the lowest score</li>
+                        <li>• On your turn: Draw a card and swap/discard, OR flip a card</li>
+                        <li>• Matching pairs in same column = 0 points</li>
+                        <li>• King = 0 points, Joker = -2 points</li>
+                        <li>• Round ends when one player reveals all cards</li>
+                    </ul>
+                </div>
+
+                <!-- Host can both start and leave the game, players can only leave the game.  -->
+                <div class="flex gap-4">
+                    <button 
+                        id="leaveGameBtn"
+                        class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition"
+                    >
+                        Leave Game
+                    </button>
+                    <button 
+                        id="startGameBtn"
+                        class="hidden flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                        disabled
+                    >
+                        Start Game
+                    </button>
+                </div>
+
+                <!-- Status Messa. -->
+                <div id="statusMessage" class="mt-4 p-3 rounded-lg hidden"></div>
+            </div>
+
+            <!-- Chat Box -->
+            <div class="bg-white rounded-lg shadow-xl p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Game Chat</h3>
+                
+                <!-- Chat Mess. -->
+                <div id="chatMessages" class="h-64 overflow-y-auto mb-4 space-y-2 bg-gray-50 rounded-lg p-4">
+                    <!-- Messages will here -->
+                </div>
+
+                <!-- Chat Input -->
+                <form id="chatForm" class="flex gap-2">
+                    <input 
+                        type="text" 
+                        id="chatInput" 
+                        placeholder="Type a message..."
+                        maxlength="500"
+                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    >
+                    <button 
+                        type="submit"
+                        class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition"
+                    >
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/waiting.js"></script>
+</body>
+</html>

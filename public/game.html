@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Golf Card Game - Play</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body class="bg-gradient-to-br from-green-900 via-green-800 to-green-900 min-h-screen">
+    <!-- Header -->
+    <header class="bg-green-950 shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-white">
+                🏌️ <span id="gameName"></span>
+                <span id="roundBadge"
+                    class="ml-3 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-200 text-green-800 align-middle">
+                    Round 1
+                </span>
+            </h1>
+            <div class="flex items-center gap-4">
+                <span class="text-green-200">
+                    <span id="roleLabel">Playing as</span>
+                    <span id="username" class="font-semibold text-white"></span>
+                </span>
+
+                <button id="backToLobbyBtn"
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition text-sm hidden">
+                    Back to Lobby
+                </button>
+
+                <button id="leaveGameBtn"
+                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                    Leave Game
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
+            <!-- Main Game Area -->
+            <div class="lg:col-span-3">
+                <!-- Turn indication -->
+                <div id="turnIndicator" class="bg-white rounded-lg shadow-lg p-4 mb-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Current Turn</p>
+                            <p id="currentPlayerName" class="text-xl font-bold text-gray-800"></p>
+                        </div>
+                        <div id="yourTurnIndicator" class="hidden">
+                            <span class="bg-green-500 text-white px-4 py-2 rounded-full font-bold animate-pulse">
+                                YOUR TURN!
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Players -->
+                <div id="otherPlayers" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <!-- Other players' cards will be shown over here -->
+                </div>
+
+                <!-- Draw and Discard Piles -->
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-4">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Card Piles</h3>
+
+                    <div class="flex justify-center gap-8">
+                        <!-- The Draw Pile -->
+                        <div class="text-center">
+                            <p class="text-sm text-gray-600 mb-2">Draw Pile</p>
+                            <button id="drawPileBtn"
+                                class="w-24 h-32 bg-blue-600 hover:bg-blue-700 rounded-lg shadow-lg flex items-center justify-center text-white font-bold text-2xl transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                🎴
+                            </button>
+                            <p id="drawPileCount" class="text-xs text-gray-500 mt-2"></p>
+                        </div>
+
+                        <!-- The Discard Pile -->
+                        <div class="text-center">
+                            <p class="text-sm text-gray-600 mb-2">Discard Pile</p>
+                            <button id="discardPileBtn"
+                                class="w-24 h-32 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-lg flex items-center justify-center text-4xl font-bold transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span id="discardPileCard">-</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pending drawn card  -->
+                    <div id="pendingCardArea" class="mt-6 hidden">
+                        <h4 class="text-center text-sm text-gray-600 mb-2">Drawn Card</h4>
+                        <div class="flex justify-center">
+                            <div id="pendingCard" class="w-24 h-32"><!-- filled by JS --></div>
+
+                        </div>
+                        <p class="text-xs text-gray-500 text-center mt-2">
+                            Choose <strong>Swap with Card</strong> or <strong>Discard</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons (swap, discard, cancel) -->
+                    <div id="actionButtons" class="mt-6 flex justify-center gap-4 hidden">
+                        <button id="swapBtn"
+                            class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-50">Swap
+                            with Card</button>
+                        <button id="discardBtn"
+                            class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-50">Discard</button>
+                        <button id="cancelBtn"
+                            class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-50">Cancel</button>
+                    </div>
+
+
+                </div>
+
+                <!--  Your Cards -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">Your Cards</h3>
+                        <p class="text-sm text-gray-600">Score: <span id="yourScore" class="font-bold text-lg">-</span>
+                        </p>
+                    </div>
+                    <div id="yourCards" class="grid grid-cols-3 gap-4 max-w-md mx-auto">
+                        <!-- Your cards will be inserted here -->
+                    </div>
+                    <p class="text-xs text-gray-500 text-center mt-4">
+                        Tip: On your turn, you can only draw a card or flip one of your face-down cards
+                    </p>
+                </div>
+            </div>
+
+            <!-- Chat Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-4 h-[calc(100vh-120px)] flex flex-col">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3">Game Chat</h3>
+
+                    <!-- Chat Messages -->
+                    <div id="chatMessages" class="flex-1 overflow-y-auto mb-3 space-y-2 bg-gray-50 rounded-lg p-3">
+                        <!-- messages will be here-->
+                    </div>
+
+                    <!-- Chat Input -->
+                    <form id="chatForm" class="flex gap-2">
+                        <input type="text" id="chatInput" placeholder="Type a message..." maxlength="500"
+                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-sm" />
+                        <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition text-sm">
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Selection Modal -->
+    <div id="cardSelectionModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Select a Card to Swap</h3>
+            <p class="text-gray-600 mb-6">Click on one of your cards to swap with the drawn card</p>
+            <button id="cancelSwapBtn"
+                class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg transition">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/common.js"></script>
+    <script src="/js/cards.js"></script>
+    <script src="/js/game.js"></script>
+</body>
+
+</html>
